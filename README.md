@@ -1,5 +1,5 @@
 # README
-Deploying [HashiCorp Nomad](https://www.nomadproject.io/) cluster on Google Cloud [Compute Engine](https://cloud.google.com/compute) instances.
+Deploying [HashiCorp Nomad](https://www.nomadproject.io/) cluster on Google Cloud [Compute Engine](https://cloud.google.com/compute) instances using custom VM images built using [Packer](https://www.packer.io/) as done in my repo [here](https://github.com/Neutrollized/packer-gcp-with-githubactions)
 
 [Google Compute Image](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_image)
 [Google Compute Region Instance Template](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_template)
