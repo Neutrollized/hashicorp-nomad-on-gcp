@@ -34,6 +34,9 @@ Policies     = n/a
 Roles        = n/a
 ```
 
+## NOTE
+It can take a couple of minutes for the load balancer to confirm that all the backends are health and start serving traffic.  It may also take a few more for Consul to vote on a leader initially, so be patient.
+
 
 ## Additional Resources
 - [Nomad the Hard Way](https://github.com/jacobmammoliti/nomad-the-hard-way)

@@ -47,9 +47,14 @@ variable "consul_gossip_key" {
 }
 
 variable "consul_server_count" {
-  description = "Number of Consul servers, should be 1, 3, or 5"
+  description = "Number of Consul servers to deploy"
   type        = number
   default     = 3
+
+  validation {
+    condition     = contains([1, 3, 5], var.consul_server_count)
+    error_message = "The number of Consul servers should be 1, 3, or 5."
+  }
 }
 
 
@@ -69,7 +74,7 @@ variable "nomad_server_tag" {
 }
 
 variable "nomad_client_machine_type" {
-  description = "Nomad client machine type/size. Clients run your workloads."
+  description = "Nomad client machine type/size. Clients run your workloads"
   type        = string
   default     = "n2d-standard-2"
 }
@@ -86,13 +91,18 @@ variable "nomad_gossip_key" {
 }
 
 variable "nomad_server_count" {
-  description = "Number of Nomad servers, should be 1, 3, or 5"
+  description = "Number of Nomad servers to deploy"
   type        = number
   default     = 3
+
+  validation {
+    condition     = contains([1, 3, 5], var.nomad_server_count)
+    error_message = "The number of Nomad servers should be 1, 3, or 5."
+  }
 }
 
 variable "nomad_client_count" {
-  description = "Number of Nomad servers, should be 1, 3, or 5"
+  description = "Number of Nomad clients to deploy"
   type        = number
   default     = 2
 }

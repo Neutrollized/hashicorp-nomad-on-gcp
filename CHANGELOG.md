@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.2.0] - 2023-09-30
 ### Added
+- Custom service account for Compute Engine
 - L7 application load balancer in front of the Consul and Nomad servers 
 - Cloud Router (NAT)
+- [Custom input validation rules](https://developer.hashicorp.com/terraform/language/values/variables#custom-validation-rules)
 ### Changed
 - Consul and Nomad servers no longer provisioned with external IPs
 - `can_ip_forward` set to `true`

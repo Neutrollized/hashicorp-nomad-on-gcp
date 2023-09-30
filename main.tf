@@ -69,6 +69,7 @@ resource "google_compute_region_instance_template" "consul_server" {
 
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    email  = google_service_account.nomad.email
     scopes = ["cloud-platform"]
   }
 }
@@ -223,6 +224,7 @@ resource "google_compute_region_instance_template" "nomad_server" {
 
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    email  = google_service_account.nomad.email
     scopes = ["cloud-platform"]
   }
 
@@ -381,6 +383,7 @@ resource "google_compute_region_instance_template" "nomad_client" {
 
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    email  = google_service_account.nomad.email
     scopes = ["cloud-platform"]
   }
 
