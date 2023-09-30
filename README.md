@@ -2,8 +2,11 @@
 Deploying [HashiCorp Nomad](https://www.nomadproject.io/) cluster on Google Cloud [Compute Engine](https://cloud.google.com/compute) instances using custom VM images built using [Packer](https://www.packer.io/) as done in my repo [here](https://github.com/Neutrollized/packer-gcp-with-githubactions)
 
 [Google Compute Image](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_image)
+
 [Google Compute Region Instance Template](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_template)
+
 [Google Compute Region Instance Group Manager](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager)
+
 [Google Cloud Load Balancing](https://cloud.google.com/load-balancing/docs/application-load-balancer)
 
 This blueprint deploys a Consul server cluster, Nomad server cluster, and a few Nomad workers (or clients, as they're called) in the default VPC.
