@@ -25,7 +25,7 @@ resource "google_compute_region_instance_template" "consul_server" {
 
   instance_description = "Consul server"
   machine_type         = var.consul_server_machine_type
-  can_ip_forward       = false
+  can_ip_forward       = true
 
   scheduling {
     automatic_restart   = true
@@ -41,8 +41,6 @@ resource "google_compute_region_instance_template" "consul_server" {
 
   network_interface {
     network = "default"
-
-    access_config {}
   }
 
   metadata = {
@@ -94,6 +92,76 @@ resource "google_compute_region_instance_group_manager" "consul_server" {
 }
 
 
+#------------------
+# Consul LB
+#------------------
+resource "google_compute_global_address" "consul" {
+  name        = "consul-ext-ip"
+  description = "External IP for Consul LB"
+
+  address_type = "EXTERNAL"
+  ip_version   = "IPV4"
+}
+
+# forwarding rule
+resource "google_compute_global_forwarding_rule" "consul" {
+  provider = google-beta
+
+  name                  = "consul-l7-forwarding-rule"
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_target_http_proxy.consul.id
+  ip_address            = google_compute_global_address.consul.id
+}
+
+# http proxy
+resource "google_compute_target_http_proxy" "consul" {
+  provider = google-beta
+
+  name    = "consul-l7-target-http-proxy"
+  url_map = google_compute_url_map.consul.id
+}
+
+resource "google_compute_url_map" "consul" {
+  provider = google-beta
+
+  name            = "consul-l7-url-map"
+  default_service = google_compute_backend_service.consul.id
+}
+
+resource "google_compute_health_check" "consul" {
+  provider = google-beta
+
+  name        = "consul-tcp-healthcheck"
+  description = "Health check via tcp"
+
+  timeout_sec         = 5
+  check_interval_sec  = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+
+  tcp_health_check {
+    port_name          = "consul-ui"
+    port_specification = "USE_NAMED_PORT"
+  }
+}
+
+resource "google_compute_backend_service" "consul" {
+  provider = google-beta
+
+  name                  = "consul-backend"
+  health_checks         = [google_compute_health_check.consul.id]
+  protocol              = "HTTP"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  port_name             = "consul-ui"
+
+  backend {
+    group = google_compute_region_instance_group_manager.consul_server.instance_group
+  }
+}
+
+
 ###---------------------------
 # Nomad Servers
 #-----------------------------
@@ -105,7 +173,7 @@ resource "google_compute_region_instance_template" "nomad_server" {
 
   instance_description = "Nomad server"
   machine_type         = var.nomad_server_machine_type
-  can_ip_forward       = false
+  can_ip_forward       = true
 
   scheduling {
     automatic_restart   = true
@@ -121,8 +189,6 @@ resource "google_compute_region_instance_template" "nomad_server" {
 
   network_interface {
     network = "default"
-
-    access_config {}
   }
 
   metadata = {
@@ -184,6 +250,76 @@ resource "google_compute_region_instance_group_manager" "nomad_server" {
 }
 
 
+#------------------
+# Nomad LB
+#------------------
+resource "google_compute_global_address" "nomad" {
+  name        = "nomad-ext-ip"
+  description = "External IP for Nomad LB"
+
+  address_type = "EXTERNAL"
+  ip_version   = "IPV4"
+}
+
+# forwarding rule
+resource "google_compute_global_forwarding_rule" "nomad" {
+  provider = google-beta
+
+  name                  = "nomad-l7-forwarding-rule"
+  ip_protocol           = "TCP"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_target_http_proxy.nomad.id
+  ip_address            = google_compute_global_address.nomad.id
+}
+
+# http proxy
+resource "google_compute_target_http_proxy" "nomad" {
+  provider = google-beta
+
+  name    = "nomad-l7-target-http-proxy"
+  url_map = google_compute_url_map.nomad.id
+}
+
+resource "google_compute_url_map" "nomad" {
+  provider = google-beta
+
+  name            = "nomad-l7-url-map"
+  default_service = google_compute_backend_service.nomad.id
+}
+
+resource "google_compute_health_check" "nomad" {
+  provider = google-beta
+
+  name        = "nomad-tcp-healthcheck"
+  description = "Health check via tcp"
+
+  timeout_sec         = 5
+  check_interval_sec  = 5
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+
+  tcp_health_check {
+    port_name          = "nomad-ui"
+    port_specification = "USE_NAMED_PORT"
+  }
+}
+
+resource "google_compute_backend_service" "nomad" {
+  provider = google-beta
+
+  name                  = "nomad-backend"
+  health_checks         = [google_compute_health_check.nomad.id]
+  protocol              = "HTTP"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  port_name             = "nomad-ui"
+
+  backend {
+    group = google_compute_region_instance_group_manager.nomad_server.instance_group
+  }
+}
+
+
 ###---------------------------
 # Nomad Clients
 #-----------------------------
@@ -195,7 +331,7 @@ resource "google_compute_region_instance_template" "nomad_client" {
 
   instance_description = "Nomad client"
   machine_type         = var.nomad_client_machine_type
-  can_ip_forward       = false
+  can_ip_forward       = true
 
   scheduling {
     automatic_restart   = true

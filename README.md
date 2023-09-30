@@ -4,6 +4,7 @@ Deploying [HashiCorp Nomad](https://www.nomadproject.io/) cluster on Google Clou
 [Google Compute Image](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_image)
 [Google Compute Region Instance Template](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_template)
 [Google Compute Region Instance Group Manager](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager)
+[Google Cloud Load Balancing](https://cloud.google.com/load-balancing/docs/application-load-balancer)
 
 This blueprint deploys a Consul server cluster, Nomad server cluster, and a few Nomad workers (or clients, as they're called) in the default VPC.
 
@@ -35,6 +36,8 @@ Roles        = n/a
 
 
 ## Additional Resources
+- [Nomad the Hard Way](https://github.com/jacobmammoliti/nomad-the-hard-way)
+
 If you would like to learn more about HashiCorp Nomad, check out my Medium articles below:
 - [Getting started with HashiCorp Nomad just got easier in v1.4](https://medium.com/@glen.yu/getting-started-with-hashicorp-nomad-just-got-easier-in-v1-4-3ffd0ebf3ad3)
 - [Migrating off of Cloud Foundry? Consider HashiCorp Nomad!](https://medium.com/@glen.yu/migrating-off-of-pivotal-cloud-foundry-consider-hashicorp-nomad-581ba603995f)
