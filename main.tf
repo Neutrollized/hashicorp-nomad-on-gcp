@@ -47,12 +47,11 @@ resource "google_compute_region_instance_template" "consul_server" {
     startup-script = <<-EOF
   IP=$(curl -s -H "Metadata-Flavor: Google" "metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
 
+  sed -i -e 's/{DATACENTER}/${var.consul_dc}/g' /etc/consul.d/server.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/consul.d/server.hcl
   sed -i -e 's/{SERVER_COUNT}/${var.consul_server_count}/g' /etc/consul.d/server.hcl
 
-  sed -i -e 's/{CLOUD}/gcp/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{ENV}/${var.environment}/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{REGION}/${var.region}/g' /etc/consul.d/consul.hcl
+  sed -i -e 's/{DATACENTER}/${var.consul_dc}/g' /etc/consul.d/consul.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/consul.d/consul.hcl
   sed -i -e 's/{GOSSIP_KEY}/${var.consul_gossip_key}/g' /etc/consul.d/consul.hcl
   sed -i -e 's/{CONSUL_SERVER_TAG}/${var.consul_server_tag}/g' /etc/consul.d/consul.hcl
@@ -196,15 +195,12 @@ resource "google_compute_region_instance_template" "nomad_server" {
     startup-script = <<-EOF
   IP=$(curl -s -H "Metadata-Flavor: Google" "metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
 
-  sed -i -e 's/{CLOUD}/gcp/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{ENV}/${var.environment}/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{REGION}/${var.region}/g' /etc/consul.d/consul.hcl
+  sed -i -e 's/{DATACENTER}/${var.consul_dc}/g' /etc/consul.d/consul.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/consul.d/consul.hcl
   sed -i -e 's/{GOSSIP_KEY}/${var.consul_gossip_key}/g' /etc/consul.d/consul.hcl
   sed -i -e 's/{CONSUL_SERVER_TAG}/${var.consul_server_tag}/g' /etc/consul.d/consul.hcl
 
-  sed -i -e 's/{CLOUD}/gcp/g' /etc/nomad.d/server.hcl
-  sed -i -e 's/{ENV}/${var.environment}/g' /etc/nomad.d/server.hcl
+  sed -i -e 's/{DATACENTER}/${var.nomad_dc}/g' /etc/nomad.d/server.hcl
   sed -i -e 's/{REGION}/${var.region}/g' /etc/nomad.d/server.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/nomad.d/server.hcl
   sed -i -e 's/{SERVER_COUNT}/${var.nomad_server_count}/g' /etc/nomad.d/server.hcl
@@ -357,15 +353,12 @@ resource "google_compute_region_instance_template" "nomad_client" {
     startup-script = <<-EOF
   IP=$(curl -s -H "Metadata-Flavor: Google" "metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
 
-  sed -i -e 's/{CLOUD}/gcp/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{ENV}/${var.environment}/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{REGION}/${var.region}/g' /etc/consul.d/consul.hcl
+  sed -i -e 's/{DATACENTER}/${var.consul_dc}/g' /etc/consul.d/consul.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/consul.d/consul.hcl
   sed -i -e 's/{GOSSIP_KEY}/${var.consul_gossip_key}/g' /etc/consul.d/consul.hcl
   sed -i -e 's/{CONSUL_SERVER_TAG}/${var.consul_server_tag}/g' /etc/consul.d/consul.hcl
 
-  sed -i -e 's/{CLOUD}/gcp/g' /etc/nomad.d/client.hcl
-  sed -i -e 's/{ENV}/${var.environment}/g' /etc/nomad.d/client.hcl
+  sed -i -e 's/{DATACENTER}/${var.nomad_dc}/g' /etc/nomad.d/client.hcl
   sed -i -e 's/{REGION}/${var.region}/g' /etc/nomad.d/client.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/nomad.d/client.hcl
 

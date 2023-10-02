@@ -2,6 +2,7 @@ data "google_netblock_ip_ranges" "health-checkers" {
   range_type = "health-checkers"
 }
 
+
 #---------------------------------------------------
 # Cloud Router (NAT)
 #---------------------------------------------------
@@ -64,8 +65,6 @@ resource "google_compute_firewall" "consul" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  #source_tags = [var.consul_server_tag, var.nomad_server_tag, var.nomad_client_tag]
-  #target_tags = [var.consul_server_tag, var.nomad_server_tag, var.nomad_client_tag]
 }
 
 resource "google_compute_firewall" "nomad" {
@@ -87,8 +86,6 @@ resource "google_compute_firewall" "nomad" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  #source_tags = [var.consul_server_tag, var.nomad_server_tag, var.nomad_client_tag]
-  #target_tags = [var.consul_server_tag, var.nomad_server_tag, var.nomad_client_tag]
 }
 
 resource "google_compute_firewall" "nomad_jobs" {

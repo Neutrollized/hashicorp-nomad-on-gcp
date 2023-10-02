@@ -11,24 +11,15 @@ variable "region" {
   type        = string
 }
 
-#variable "zone" {
-#  description = "Zone to deploy GCP resources"
-#  type        = string
-#}
-
-
-###-------------------------
-# Consul & Nomad
-#---------------------------
-variable "environment" {
-  description = "Environment setting for Consul and Nomad config"
-  type        = string
-}
-
 
 ###-------------------------
 # Consul
 #---------------------------
+variable "consul_dc" {
+  description = "Name of Consul datacenter"
+  type        = string
+}
+
 variable "consul_server_machine_type" {
   description = "Consul server machine type/size"
   type        = string
@@ -61,6 +52,11 @@ variable "consul_server_count" {
 ###-------------------------
 # Nomad
 #---------------------------
+variable "nomad_dc" {
+  description = "Name of Nomad datacenter"
+  type        = string
+}
+
 variable "nomad_server_machine_type" {
   description = "Nomad server machine type/size"
   type        = string
