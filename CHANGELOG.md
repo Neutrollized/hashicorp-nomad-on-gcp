@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2023-11-25
+### Changed
+- Added Consul and Nomad DC names as suffixes for cluster and load balancer resources for easier identification.
+- Updated `google` and `google-beta` providers from `~> 4.0` to `~> 5.0`
+
 ## [0.3.1] - 2023-10-07
 ### Changed
 - Updated `google` provider from `>= 4.78.0` to `~> 4.0`

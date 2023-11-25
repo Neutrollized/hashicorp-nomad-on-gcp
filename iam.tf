@@ -1,5 +1,5 @@
 resource "google_service_account" "nomad" {
-  account_id   = "nomad-sa"
+  account_id   = "nomad-sa-${var.nomad_dc}"
   display_name = "Custom Nomad and Consul service account"
 }
 

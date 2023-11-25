@@ -1,18 +1,18 @@
 project_id = "myproject-123"
-
-environment = "test"
-region      = "northamerica-northeast1"
+region     = "northamerica-northeast1"
 
 
 # use key that doesn't have '/' in the key
 # alternatively, you can change the sed delimiters to ';' or something other than '/'
 # consul keygen
+consul_dc                  = "gcp-east"
 consul_gossip_key          = "GDoRpwLa1SEW1wNCYx859GNYzY+dXlQ19uIZqyIDxmE="
 consul_server_tag          = "consulserver"
 consul_server_machine_type = "e2-small"
 consul_server_count        = 1
 
 # openssl rand -base64 32
+nomad_dc                  = "gcp-east"
 nomad_gossip_key          = "Fqo1smdljR9EfE2evogQgrtJbqA2i21cY91b5WWgOPk="
 nomad_server_machine_type = "e2-small"
 nomad_server_count        = 1

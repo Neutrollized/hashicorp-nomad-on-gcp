@@ -18,7 +18,7 @@ data "google_compute_image" "nomad_client" {
 # Consul Servers
 #-----------------------------
 resource "google_compute_region_instance_template" "consul_server" {
-  name        = "consul-server-template"
+  name        = "consul-server-template-${var.consul_dc}"
   description = "Managed by Terraform."
 
   tags = [var.consul_server_tag]
@@ -74,7 +74,7 @@ resource "google_compute_region_instance_template" "consul_server" {
 }
 
 resource "google_compute_region_instance_group_manager" "consul_server" {
-  name               = "consul-server-igm"
+  name               = "consul-server-igm-${var.consul_dc}"
   base_instance_name = "consul-server"
   region             = var.region
   target_size        = var.consul_server_count
@@ -96,7 +96,7 @@ resource "google_compute_region_instance_group_manager" "consul_server" {
 # Consul LB
 #------------------
 resource "google_compute_global_address" "consul" {
-  name        = "consul-ext-ip"
+  name        = "consul-ext-ip-${var.consul_dc}"
   description = "External IP for Consul LB"
 
   address_type = "EXTERNAL"
@@ -107,7 +107,7 @@ resource "google_compute_global_address" "consul" {
 resource "google_compute_global_forwarding_rule" "consul" {
   provider = google-beta
 
-  name                  = "consul-l7-forwarding-rule"
+  name                  = "consul-l7-forwarding-rule-${var.consul_dc}"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   port_range            = "80"
@@ -119,21 +119,21 @@ resource "google_compute_global_forwarding_rule" "consul" {
 resource "google_compute_target_http_proxy" "consul" {
   provider = google-beta
 
-  name    = "consul-l7-target-http-proxy"
+  name    = "consul-l7-target-http-proxy-${var.consul_dc}"
   url_map = google_compute_url_map.consul.id
 }
 
 resource "google_compute_url_map" "consul" {
   provider = google-beta
 
-  name            = "consul-l7-url-map"
+  name            = "consul-l7-url-map-${var.consul_dc}"
   default_service = google_compute_backend_service.consul.id
 }
 
 resource "google_compute_health_check" "consul" {
   provider = google-beta
 
-  name        = "consul-tcp-healthcheck"
+  name        = "consul-tcp-healthcheck-${var.consul_dc}"
   description = "Health check via tcp"
 
   timeout_sec         = 5
@@ -150,7 +150,7 @@ resource "google_compute_health_check" "consul" {
 resource "google_compute_backend_service" "consul" {
   provider = google-beta
 
-  name                  = "consul-backend"
+  name                  = "consul-backend-${var.consul_dc}"
   health_checks         = [google_compute_health_check.consul.id]
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -166,7 +166,7 @@ resource "google_compute_backend_service" "consul" {
 # Nomad Servers
 #-----------------------------
 resource "google_compute_region_instance_template" "nomad_server" {
-  name        = "nomad-server-template"
+  name        = "nomad-server-template-${var.nomad_dc}"
   description = "Managed by Terraform."
 
   tags = [var.nomad_server_tag]
@@ -230,7 +230,7 @@ resource "google_compute_region_instance_template" "nomad_server" {
 }
 
 resource "google_compute_region_instance_group_manager" "nomad_server" {
-  name               = "nomad-server-igm"
+  name               = "nomad-server-igm-${var.nomad_dc}"
   base_instance_name = "nomad-server"
   region             = var.region
   target_size        = var.nomad_server_count
@@ -252,7 +252,7 @@ resource "google_compute_region_instance_group_manager" "nomad_server" {
 # Nomad LB
 #------------------
 resource "google_compute_global_address" "nomad" {
-  name        = "nomad-ext-ip"
+  name        = "nomad-ext-ip-${var.nomad_dc}"
   description = "External IP for Nomad LB"
 
   address_type = "EXTERNAL"
@@ -263,7 +263,7 @@ resource "google_compute_global_address" "nomad" {
 resource "google_compute_global_forwarding_rule" "nomad" {
   provider = google-beta
 
-  name                  = "nomad-l7-forwarding-rule"
+  name                  = "nomad-l7-forwarding-rule-${var.nomad_dc}"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   port_range            = "80"
@@ -275,21 +275,21 @@ resource "google_compute_global_forwarding_rule" "nomad" {
 resource "google_compute_target_http_proxy" "nomad" {
   provider = google-beta
 
-  name    = "nomad-l7-target-http-proxy"
+  name    = "nomad-l7-target-http-proxy-${var.nomad_dc}"
   url_map = google_compute_url_map.nomad.id
 }
 
 resource "google_compute_url_map" "nomad" {
   provider = google-beta
 
-  name            = "nomad-l7-url-map"
+  name            = "nomad-l7-url-map-${var.nomad_dc}"
   default_service = google_compute_backend_service.nomad.id
 }
 
 resource "google_compute_health_check" "nomad" {
   provider = google-beta
 
-  name        = "nomad-tcp-healthcheck"
+  name        = "nomad-tcp-healthcheck-${var.nomad_dc}"
   description = "Health check via tcp"
 
   timeout_sec         = 5
@@ -306,7 +306,7 @@ resource "google_compute_health_check" "nomad" {
 resource "google_compute_backend_service" "nomad" {
   provider = google-beta
 
-  name                  = "nomad-backend"
+  name                  = "nomad-backend-${var.nomad_dc}"
   health_checks         = [google_compute_health_check.nomad.id]
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -322,7 +322,7 @@ resource "google_compute_backend_service" "nomad" {
 # Nomad Clients
 #-----------------------------
 resource "google_compute_region_instance_template" "nomad_client" {
-  name        = "nomad-client-template"
+  name        = "nomad-client-template-${var.nomad_dc}"
   description = "Managed by Terraform."
 
   tags = [var.nomad_client_tag]
@@ -386,7 +386,7 @@ resource "google_compute_region_instance_template" "nomad_client" {
 }
 
 resource "google_compute_region_instance_group_manager" "nomad_client" {
-  name               = "nomad-client-igm"
+  name               = "nomad-client-igm-${var.nomad_dc}"
   base_instance_name = "nomad-client"
   region             = var.region
   target_size        = var.nomad_client_count
