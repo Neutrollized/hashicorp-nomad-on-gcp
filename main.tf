@@ -96,7 +96,7 @@ resource "google_compute_region_instance_group_manager" "consul_server" {
 # Consul LB
 #------------------
 resource "google_compute_global_address" "consul" {
-  name        = "consul-ext-ip-${var.consul_dc}"
+  name        = "consul-server-ext-ip-${var.consul_dc}"
   description = "External IP for Consul LB"
 
   address_type = "EXTERNAL"
@@ -107,7 +107,7 @@ resource "google_compute_global_address" "consul" {
 resource "google_compute_global_forwarding_rule" "consul" {
   provider = google-beta
 
-  name                  = "consul-l7-forwarding-rule-${var.consul_dc}"
+  name                  = "consul-server-l7-forwarding-rule-${var.consul_dc}"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   port_range            = "80"
@@ -119,21 +119,21 @@ resource "google_compute_global_forwarding_rule" "consul" {
 resource "google_compute_target_http_proxy" "consul" {
   provider = google-beta
 
-  name    = "consul-l7-target-http-proxy-${var.consul_dc}"
+  name    = "consul-server-l7-target-http-proxy-${var.consul_dc}"
   url_map = google_compute_url_map.consul.id
 }
 
 resource "google_compute_url_map" "consul" {
   provider = google-beta
 
-  name            = "consul-l7-url-map-${var.consul_dc}"
+  name            = "consul-server-l7-url-map-${var.consul_dc}"
   default_service = google_compute_backend_service.consul.id
 }
 
 resource "google_compute_health_check" "consul" {
   provider = google-beta
 
-  name        = "consul-tcp-healthcheck-${var.consul_dc}"
+  name        = "consul-server-tcp-healthcheck-${var.consul_dc}"
   description = "Health check via tcp"
 
   timeout_sec         = 5
@@ -150,7 +150,7 @@ resource "google_compute_health_check" "consul" {
 resource "google_compute_backend_service" "consul" {
   provider = google-beta
 
-  name                  = "consul-backend-${var.consul_dc}"
+  name                  = "consul-server-backend-${var.consul_dc}"
   health_checks         = [google_compute_health_check.consul.id]
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -252,7 +252,7 @@ resource "google_compute_region_instance_group_manager" "nomad_server" {
 # Nomad LB
 #------------------
 resource "google_compute_global_address" "nomad" {
-  name        = "nomad-ext-ip-${var.nomad_dc}"
+  name        = "nomad-server-ext-ip-${var.nomad_dc}"
   description = "External IP for Nomad LB"
 
   address_type = "EXTERNAL"
@@ -263,7 +263,7 @@ resource "google_compute_global_address" "nomad" {
 resource "google_compute_global_forwarding_rule" "nomad" {
   provider = google-beta
 
-  name                  = "nomad-l7-forwarding-rule-${var.nomad_dc}"
+  name                  = "nomad-server-l7-forwarding-rule-${var.nomad_dc}"
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   port_range            = "80"
@@ -275,21 +275,21 @@ resource "google_compute_global_forwarding_rule" "nomad" {
 resource "google_compute_target_http_proxy" "nomad" {
   provider = google-beta
 
-  name    = "nomad-l7-target-http-proxy-${var.nomad_dc}"
+  name    = "nomad-server-l7-target-http-proxy-${var.nomad_dc}"
   url_map = google_compute_url_map.nomad.id
 }
 
 resource "google_compute_url_map" "nomad" {
   provider = google-beta
 
-  name            = "nomad-l7-url-map-${var.nomad_dc}"
+  name            = "nomad-server-l7-url-map-${var.nomad_dc}"
   default_service = google_compute_backend_service.nomad.id
 }
 
 resource "google_compute_health_check" "nomad" {
   provider = google-beta
 
-  name        = "nomad-tcp-healthcheck-${var.nomad_dc}"
+  name        = "nomad-server-tcp-healthcheck-${var.nomad_dc}"
   description = "Health check via tcp"
 
   timeout_sec         = 5
@@ -306,7 +306,7 @@ resource "google_compute_health_check" "nomad" {
 resource "google_compute_backend_service" "nomad" {
   provider = google-beta
 
-  name                  = "nomad-backend-${var.nomad_dc}"
+  name                  = "nomad-server-backend-${var.nomad_dc}"
   health_checks         = [google_compute_health_check.nomad.id]
   protocol              = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
@@ -314,85 +314,5 @@ resource "google_compute_backend_service" "nomad" {
 
   backend {
     group = google_compute_region_instance_group_manager.nomad_server.instance_group
-  }
-}
-
-
-###---------------------------
-# Nomad Clients
-#-----------------------------
-resource "google_compute_region_instance_template" "nomad_client" {
-  name        = "nomad-client-template-${var.nomad_dc}"
-  description = "Managed by Terraform."
-
-  tags = [var.nomad_client_tag]
-
-  instance_description = "Nomad client"
-  machine_type         = var.nomad_client_machine_type
-  can_ip_forward       = true
-
-  scheduling {
-    automatic_restart   = true
-    on_host_maintenance = "MIGRATE"
-  }
-
-  // Create a new boot disk from an image
-  disk {
-    source_image = data.google_compute_image.nomad_client.self_link
-    auto_delete  = true
-    boot         = true
-  }
-
-  network_interface {
-    network = "default"
-
-    access_config {}
-  }
-
-  metadata = {
-    startup-script = <<-EOF
-  IP=$(curl -s -H "Metadata-Flavor: Google" "metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip")
-
-  sed -i -e 's/{DATACENTER}/${var.consul_dc}/g' /etc/consul.d/consul.hcl
-  sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/consul.d/consul.hcl
-  sed -i -e 's/{GOSSIP_KEY}/${var.consul_gossip_key}/g' /etc/consul.d/consul.hcl
-  sed -i -e 's/{CONSUL_SERVER_TAG}/${var.consul_server_tag}/g' /etc/consul.d/consul.hcl
-
-  sed -i -e 's/{DATACENTER}/${var.nomad_dc}/g' /etc/nomad.d/client.hcl
-  sed -i -e 's/{REGION}/${var.region}/g' /etc/nomad.d/client.hcl
-  sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/nomad.d/client.hcl
-
-  systemctl enable consul
-  systemctl enable nomad
-
-  systemctl start consul
-  systemctl start nomad
-  EOF
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    email  = google_service_account.nomad.email
-    scopes = ["cloud-platform"]
-  }
-
-  depends_on = [
-    google_compute_region_instance_group_manager.nomad_server
-  ]
-}
-
-resource "google_compute_region_instance_group_manager" "nomad_client" {
-  name               = "nomad-client-igm-${var.nomad_dc}"
-  base_instance_name = "nomad-client"
-  region             = var.region
-  target_size        = var.nomad_client_count
-
-  version {
-    name              = google_compute_region_instance_template.nomad_client.name
-    instance_template = google_compute_region_instance_template.nomad_client.id
   }
 }
