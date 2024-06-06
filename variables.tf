@@ -112,3 +112,31 @@ variable "nomad_client_count" {
   type        = number
   default     = 2
 }
+
+variable "nomad_allow_privileged_jobs" {
+  description = "Whether or not to allow privileged Docker jobs"
+  type        = bool
+  default     = false
+}
+
+variable "fluentd_svc_status" {
+  description = "Whether google-fluentd will be enabled or disabled"
+  type        = string
+  default     = "enable"
+
+  validation {
+    condition     = contains(["enable", "disable"], var.fluentd_svc_status)
+    error_message = "The service status should be either enable or disable."
+  }
+}
+
+variable "fluentd_svc_state" {
+  description = "Whether google-fluentd will be started or stopped"
+  type        = string
+  default     = "start"
+
+  validation {
+    condition     = contains(["start", "stop"], var.fluentd_svc_state)
+    error_message = "The service state at startup should be either start or stop."
+  }
+}

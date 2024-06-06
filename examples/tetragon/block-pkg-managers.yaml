@@ -1,0 +1,27 @@
+---
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "block-pkg-managers"
+  annotations:
+    description: "Blocks execution of package manager binaries such as apt, apt-get, dpkg, apk, etc."
+spec:
+  kprobes:
+  - call: "security_bprm_creds_from_file"
+    syscall: false
+    args:
+    - index: 0
+      type: "nop"
+    - index: 1
+      type: "file"
+    selectors:
+    - matchArgs:
+      - index: 1
+        operator: "Equal"
+        values:
+        - "/usr/bin/apt"
+        - "/usr/bin/apt-get"
+        - "/usr/bin/dpkg"
+        - "/sbin/apk"
+      matchActions:
+      - action: Sigkill

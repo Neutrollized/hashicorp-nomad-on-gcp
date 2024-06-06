@@ -1,0 +1,55 @@
+---
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "block-nginx-write-index"
+  annotations:
+    description: "Blocks writes to NGINX html directory"
+spec:
+  kprobes:
+  - call: "fd_install"
+    syscall: false
+    args:
+    - index: 0
+      type: int
+    - index: 1
+      type: "file"
+    selectors:
+    - matchPIDs:
+      - operator: "NotIn"
+        followForks: false
+        isNamespacePID: true
+        values:
+        - 0
+        - 1
+      matchArgs:
+      - index: 1
+        operator: "Equal"
+        values:
+        - "/usr/share/nginx/html/index.html"
+      matchBinaries:
+      - operator: "NotIn"
+        values:
+         - "/usr/bin/cat"
+      matchActions:
+      - action: Sigkill
+    - matchPIDs:
+      - operator: "NotIn"
+        followForks: false
+        isNamespacePID: true
+        values:
+        - 0
+        - 1
+      matchArgs:
+      - index: 1
+        operator: "Equal"
+        values:
+        - "/usr/share/nginx/html/50x.html"
+      matchBinaries:
+      - operator: "NotIn"
+        values:
+         - "/usr/bin/vi"
+         - "/usr/bin/vim"
+         - "/usr/bin/vim.basic"	# gotcha! this is the real binary you need to block
+      matchActions:
+      - action: Sigkill

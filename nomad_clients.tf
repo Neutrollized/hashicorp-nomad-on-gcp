@@ -41,12 +41,15 @@ resource "google_compute_region_instance_template" "nomad_client" {
   sed -i -e 's/{DATACENTER}/${var.nomad_dc}/g' /etc/nomad.d/client.hcl
   sed -i -e 's/{REGION}/${var.region}/g' /etc/nomad.d/client.hcl
   sed -i -e "s/{PRIVATE_IPV4}/$${IP}/g" /etc/nomad.d/client.hcl
+  sed -i -e "s/{DOCKER_ALLOW_PRIVILEGED_JOBS}/${var.nomad_allow_privileged_jobs}/g" /etc/nomad.d/client.hcl
 
   systemctl enable consul
   systemctl enable nomad
+  systemctl ${var.fluentd_svc_status} google-fluentd
 
   systemctl start consul
   systemctl start nomad
+  systemctl ${var.fluentd_svc_state} google-fluentd
   EOF
   }
 
