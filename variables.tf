@@ -113,6 +113,12 @@ variable "nomad_client_count" {
   default     = 2
 }
 
+variable "nomad_client_external_ip" {
+  description = "Whether or not to provision external IP with Nomad clients"
+  type        = bool
+  default     = false
+}
+
 variable "nomad_allow_privileged_jobs" {
   description = "Whether or not to allow privileged Docker jobs"
   type        = bool

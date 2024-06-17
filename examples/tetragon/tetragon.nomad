@@ -8,9 +8,19 @@ job "tetragon" {
 
       # saved to local/ by default
       artifact {
+        source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/log-tcp-connect-and-close.yaml"
+        mode        = "file"
+        destination = "log-tcp-connect-and-close.yaml"
+      }
+      artifact {
         source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/log-file-access.yaml"
         mode        = "file"
         destination = "log-file-access.yaml"
+      }
+      artifact {
+        source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/block-internet-egress.yaml"
+        mode        = "file"
+        destination = "block-internet-egress.yaml"
       }
       artifact {
         source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/block-nginx-write-index.yaml"
@@ -24,7 +34,7 @@ job "tetragon" {
       }
 
       config {
-        image = "quay.io/cilium/tetragon:v1.1.0"
+        image = "quay.io/cilium/tetragon:v1.1.2"
         args  = [
           "--export-filename",
           "/var/log/tetragon/tetragon.log",
@@ -35,7 +45,9 @@ job "tetragon" {
         #pid_mode     = "host"
 
         volumes = [
+#          "log-tcp-connect-and-close.yaml:/etc/tetragon/tetragon.tp.d/log-tcp-connect-and-close.yaml",
           "log-file-access.yaml:/etc/tetragon/tetragon.tp.d/log-file-access.yaml",
+          "block-internet-egress.yaml:/etc/tetragon/tetragon.tp.d/block-internet-egress.yaml",
           "block-nginx-write-index.yaml:/etc/tetragon/tetragon.tp.d/block-nginx-write-index.yaml",
           "block-pkg-managers.yaml:/etc/tetragon/tetragon.tp.d/block-pkg-managers.yaml",
         ]
@@ -59,7 +71,7 @@ job "tetragon" {
 
       service {
         name = "tetragon"
-        tags = ["tetragon", "v1.1.0"]
+        tags = ["tetragon", "v1.1.2"]
       }
     }
 

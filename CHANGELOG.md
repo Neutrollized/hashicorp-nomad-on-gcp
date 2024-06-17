@@ -4,10 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2024-06-17
+### Added
+- New variable, `nomad_client_external_ip` (default: `false`), used to easily control whether Nomad clients are to be provisioned with an external IP or not
+- Additional Tracing Policies
+### Changed
+- Updated Tetragon version from `1.1.0` to `1.1.2`
+
 ## [0.6.0] - 2024-06-06
 ### Added
 - **Changes below requires [GCP Packer images v0.11.0+](https://github.com/Neutrollized/packer-gcp-with-githubactions/blob/main/CHANGELOG.md#0110---2024-05-28)**
-- Variable `nomad_allow_privileged_jobs` (default: `false`), when enabled will [allow privileged Docker jobs](https://developer.hashicorp.com/nomad/tutorials/stateful-workloads/stateful-workloads-csi-volumes?in=nomad%2Fstateful-workloads#enable-privileged-docker-jobs) to run
+- New variable, `nomad_allow_privileged_jobs` (default: `false`), when enabled will [allow privileged Docker jobs](https://developer.hashicorp.com/nomad/tutorials/stateful-workloads/stateful-workloads-csi-volumes?in=nomad%2Fstateful-workloads#enable-privileged-docker-jobs) to run
 - `google-fluentd` service enable and start 
 - Log Writer and Monitoring Metric Writer roles added to Nomad client service account"
 - Variables `fluentd_svc_status` (default: `enable`) and `fluentd_svc_state` (default: `start`), to enable/disable and start/stop the **google-fluentd** service at VM's deployment

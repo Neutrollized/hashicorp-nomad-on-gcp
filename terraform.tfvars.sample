@@ -19,6 +19,7 @@ nomad_server_count        = 1
 
 nomad_client_machine_type   = "e2-medium"
 nomad_client_count          = 3
+nomad_client_external_ip    = false
 nomad_allow_privileged_jobs = true
 
 enable_fabio_lb = true

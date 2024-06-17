@@ -1,0 +1,19 @@
+---
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "log-tcp-connect-and-close"
+  annotations:
+    description: "Log TCP connects and closes"
+spec:
+  kprobes:
+  - call: "tcp_connect"
+    syscall: false
+    args:
+    - index: 0
+      type: "sock"
+  - call: "tcp_close"
+    syscall: false
+    args:
+    - index: 0
+      type: "sock"

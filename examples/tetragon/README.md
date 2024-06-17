@@ -1,6 +1,9 @@
 # Tetragon on Nomad
 `nomad run tetragon.nomad` to deploy Tetragon service.  Other YAML files included here are examples of Tracing Policies. 
 
+See my [Medium article](https://medium.com/@glen.yu/can-you-run-tetragon-on-hashicorp-nomad-part-1-8d51b2d23ee3) for a more detailed guide to running Tetragon on Nomad.
+
+
 ## Setup
 I have an accompanying [repo](https://github.com/Neutrollized/packer-gcp-with-githubactions) which builds the GCE VM Images used in this deployment.  It various configs in there already includes the settings neccessary for this Nomad deployment.  Below are some notes to help you understand why they're there:
 
@@ -44,7 +47,8 @@ Hence, you don't need a network section as Tetragon agents don't talk to each ot
 ## Tracing Policies
 For the most part, Tetragon Tracing Policies written for Kubernetes will work the same in Nomad with some minor differences:
 - Nomad namespaces aren't recognized, so Tracing Policies are **cluster wide**
-- Policies involving networking need to be tested as fundamental differences in how networking operates in Nomad vs. Kubernetes can cause unexpected behavior
+- policies involving networking need to be tested as fundamental differences in how networking operates in Nomad vs. Kubernetes can cause unexpected behavior
+- Docker's bridge network subnet CIDR needs to be included/accounted for when creating Tracing Policies involving source and destination addresses 
 
 ### Deployment
 Tracing Policy deployment is very simple and simply requires the policies to be in a specific folder location within the Tetragon agent when it starts.  While you *can* run Tetragon as a systemd service, this makes updating policies a bit more tedious vs redeploying the Nomad jobspec.

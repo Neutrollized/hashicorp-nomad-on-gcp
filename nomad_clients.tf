@@ -26,7 +26,12 @@ resource "google_compute_region_instance_template" "nomad_client" {
   network_interface {
     network = "default"
 
-    access_config {}
+    # generally not recommended to enable external IPs on nodes,
+    # but you can enable external IPs for testing without LB
+    dynamic "access_config" {
+      for_each = var.nomad_client_external_ip ? [1] : []
+      content {}
+    }
   }
 
   metadata = {
