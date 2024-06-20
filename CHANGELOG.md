@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.6.2] - 2024-06-20
+### Fixed
+- Updated Tetragon Tracing Policy, `block-internet-egress.yaml` to include source IP address
+
 ## [0.6.1] - 2024-06-17
 ### Added
 - New variable, `nomad_client_external_ip` (default: `false`), used to easily control whether Nomad clients are to be provisioned with an external IP or not

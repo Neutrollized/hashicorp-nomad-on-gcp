@@ -45,10 +45,11 @@ Hence, you don't need a network section as Tetragon agents don't talk to each ot
 
 
 ## Tracing Policies
-For the most part, Tetragon Tracing Policies written for Kubernetes will work the same in Nomad with some minor differences:
+For the most part, Tetragon Tracing Policies written for Kubernetes will work the same in Nomad with some differences:
 - Nomad namespaces aren't recognized, so Tracing Policies are **cluster wide**
 - policies involving networking need to be tested as fundamental differences in how networking operates in Nomad vs. Kubernetes can cause unexpected behavior
 - Docker's bridge network subnet CIDR needs to be included/accounted for when creating Tracing Policies involving source and destination addresses 
+- Blocking Internet egress will prevent Nomad job deployments as well as the block occurs at a node level in Nomad vs in Kubernetes.  The workaround is to add another requirement to the policy to specify that the source address has to come from Docker's bridge network
 
 ### Deployment
 Tracing Policy deployment is very simple and simply requires the policies to be in a specific folder location within the Tetragon agent when it starts.  While you *can* run Tetragon as a systemd service, this makes updating policies a bit more tedious vs redeploying the Nomad jobspec.
