@@ -6,7 +6,6 @@ job "tetragon" {
     task "agent" {
       driver = "docker"
 
-      # saved to local/ by default
       artifact {
         source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/log-tcp-connect-and-close.yaml"
         mode        = "file"
@@ -31,6 +30,11 @@ job "tetragon" {
         source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/block-pkg-managers.yaml"
         mode        = "file"
         destination = "block-pkg-managers.yaml"
+      }
+      artifact {
+        source      = "https://storage.googleapis.com/public-file-server/tetragon-tracing-policies/block-fd-install.yaml"
+        mode        = "file"
+        destination = "block-fd-install.yaml"
       }
 
       config {
