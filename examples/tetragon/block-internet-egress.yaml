@@ -17,8 +17,8 @@ spec:
       - index: 0
         operator: "SAddr"
         values:
+        - 10.162.0.0/20		# VPC subnet CIDR -- need this for health checks (from Consul)
         - 172.17.0.0/16		# Docker bridge network CIDR (default)
-        - 10.162.0.0/20		# VPC subnet CIDR
       - index: 0
         operator: "NotDAddr"
         values:
