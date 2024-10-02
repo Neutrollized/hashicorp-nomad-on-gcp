@@ -38,7 +38,7 @@ job "tetragon" {
       }
 
       config {
-        image = "quay.io/cilium/tetragon:v1.1.2"
+        image = "quay.io/cilium/tetragon:v1.2.0"
         args  = [
           "--export-filename",
           "/var/log/tetragon/tetragon.log",
@@ -75,7 +75,7 @@ job "tetragon" {
 
       service {
         name = "tetragon"
-        tags = ["tetragon", "v1.1.2"]
+        tags = ["tetragon", "v1.2.0"]
       }
     }
 

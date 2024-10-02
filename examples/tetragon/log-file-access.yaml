@@ -25,17 +25,3 @@ spec:
       matchActions:
       - action: Post
         rateLimit: 1m
-    - matchArgs:
-      - index: 0
-        operator: "Equal"
-        values:
-        - "/etc/passwd"
-      matchBinaries:
-      - operator: "NotIn"
-        values:
-         - "/usr/bin/java"
-         - "/usr/bin/runc"
-         - "/usr/bin/tetragon"
-      matchActions:
-      - action: Post
-        rateLimit: 1m

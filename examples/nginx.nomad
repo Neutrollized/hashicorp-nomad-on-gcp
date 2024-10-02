@@ -20,14 +20,14 @@ job "nginx" {
         name = "nginx"
         tags = ["nginx", "webserver"]
         port = "http"
-        check {
-          name     = "HTTP check"
-          type     = "http"
-          interval = "10s"
-          timeout  = "2s"
-          path     = "/"
-          method   = "GET"
-        }
+#        check {
+#          name     = "HTTP check"
+#          type     = "http"
+#          interval = "10s"
+#          timeout  = "2s"
+#          path     = "/"
+#          method   = "GET"
+#        }
       }
     }
 

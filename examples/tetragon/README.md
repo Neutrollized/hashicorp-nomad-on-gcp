@@ -55,3 +55,35 @@ For the most part, Tetragon Tracing Policies written for Kubernetes will work th
 Tracing Policy deployment is very simple and simply requires the policies to be in a specific folder location within the Tetragon agent when it starts.  While you *can* run Tetragon as a systemd service, this makes updating policies a bit more tedious vs redeploying the Nomad jobspec.
 
 The way I chose to do this is put my Tracing Policies in a public GCS bucket and use Nomad's [artifact](https://developer.hashicorp.com/nomad/docs/job-specification/artifact) block to pull down the files to the `local/` directory and then mount each file (policy) into the desired path. 
+
+
+## Google Cloud Logging
+The logs are sent to GCP via the google-fluentd to Cloud Logging:
+```
+        image = "quay.io/cilium/hubble-export-stdout:v1.0.4"
+        privileged = false
+
+        command = "export-stdout"
+        args = ["/var/log/tetragon/tetragon.log"]
+
+        logging {
+          type = "fluentd"
+          config {
+            fluentd-address = "localhost:24224"
+            tag = "tetragon"
+          }
+        }
+      }
+```
+
+You can query for specific entries from GCE VM logs by querying their respective policy names:
+```
+resource_type="gce_instance"
+jsonPayload.log:"\"policy_name\":\"block-internet-egress\""
+```
+
+The query above searches for entries where the `jsonPayload.log` contains `"policy_name":"block-internet-egress"`.  Alternatively, you can query for all entries where the policy name begins with `block-`:
+```
+resource_type="gce_instance"
+jsonPayload.log:"\"policy_name\":\"block-"
+```
