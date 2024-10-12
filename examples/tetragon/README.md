@@ -78,12 +78,12 @@ The logs are sent to GCP via the google-fluentd to Cloud Logging:
 
 You can query for specific entries from GCE VM logs by querying their respective policy names:
 ```
-resource_type="gce_instance"
+resource.type="gce_instance"
 jsonPayload.log:"\"policy_name\":\"block-internet-egress\""
 ```
 
 The query above searches for entries where the `jsonPayload.log` contains `"policy_name":"block-internet-egress"`.  Alternatively, you can query for all entries where the policy name begins with `block-`:
 ```
-resource_type="gce_instance"
+resource.type="gce_instance"
 jsonPayload.log:"\"policy_name\":\"block-"
 ```
